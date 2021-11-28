@@ -4,12 +4,6 @@ import { useWeb3 } from "@3rdweb/hooks";
 import { useFormik } from 'formik';
 
 
-
-export const getData = async () => {
-  const data = await axios.get("http://localhost:8000/list");
-  console.log(data);
-};
-
 const validate = values => {
   const errors = {};
   if (!values.name) {
@@ -35,7 +29,6 @@ const validate = values => {
   } else if (values.description.length > 3000) {
     errors.description = "Must be 3000 characters or less, this isn't your school essay";
   }
-
   return errors;
 };
 
@@ -63,8 +56,11 @@ export default function Home() {
          },
        });
 
+
+
   return (
     <>
+      
       {/* component */}
       <div
         className="relative flex items-center justify-center min-h-screen px-4 py-12 bg-no-repeat bg-cover bg-gray-50 sm:px-6 lg:px-8"
@@ -91,7 +87,7 @@ export default function Home() {
               <label className="text-sm font-bold tracking-wide text-gray-500">
                 Name of the NFT
               </label>
-              {formik.errors.name ? <div>{formik.errors.name}</div> : null}
+              {formik.errors.name && formik.touched.name ? <div>{formik.errors.name}</div> : null}
               <input
                 className="p-2 text-base border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
                 type = "text"
@@ -99,12 +95,13 @@ export default function Home() {
                 name = "name"
                 placeholder="My very cool NFT"
                 onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 value={formik.values.name}
               />
               <label className="text-sm font-bold tracking-wide text-gray-500">
                 Description
               </label>
-              {formik.errors.description ? <div>{formik.errors.description}</div> : null}
+              {formik.errors.description && formik.touched.description  ? <div>{formik.errors.description}</div> : null}
               <input
                 className="p-2 text-base border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
                 type="text"
@@ -112,6 +109,7 @@ export default function Home() {
                 name = "description"
                 placeholder="Bored Ape"
                 onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 value={formik.values.description}
               />
             </div>
