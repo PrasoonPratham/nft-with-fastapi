@@ -6,10 +6,6 @@ export const getData = async () => {
   console.log(data);
 };
 
-export const Connect = () => {
-  return <ConnectWallet />;
-};
-
 export default function Home() {
   return (
     <>
