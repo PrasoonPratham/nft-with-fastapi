@@ -1,5 +1,7 @@
 import axios from "axios";
 import { ConnectWallet } from "@3rdweb/react";
+import { useWeb3 } from "@3rdweb/hooks";
+
 
 export const getData = async () => {
   const data = await axios.get("http://localhost:8000/list");
@@ -7,6 +9,7 @@ export const getData = async () => {
 };
 
 export default function Home() {
+  const { address, chainId, provider } = useWeb3();
   return (
     <>
       {/* component */}
@@ -30,7 +33,6 @@ export default function Home() {
           <button className="w-full mt-5">
             <ConnectWallet>Connect Metamask</ConnectWallet> 
           </button>
-
           <form className="mt-8 space-y-3" action="#" method="POST">
             <div className="grid grid-cols-1 space-y-2">
               <label className="text-sm font-bold tracking-wide text-gray-500">
