@@ -1,40 +1,38 @@
-import axios from 'axios';
+import axios from "axios";
+import { ConnectWallet } from "@3rdweb/react";
 
 export const getData = async () => {
-  const data = await axios.get('http://localhost:8000/list');
-  console.log(data)
+  const data = await axios.get("http://localhost:8000/list");
+  console.log(data);
 };
 
-
-
+export const Connect = () => {
+  return <ConnectWallet />;
+};
 
 export default function Home() {
-
-  const onSubmit = data => {
-    axios.post('http://localhost:8000/mint', { Name: data.name })
-  }
-
   return (
     <>
       {/* component */}
       <div
         className="relative flex items-center justify-center min-h-screen px-4 py-12 bg-no-repeat bg-cover bg-gray-50 sm:px-6 lg:px-8"
         style={{
-          backgroundImage:
-            "url(bg.png)"
+          backgroundImage: "url(bg.png)",
         }}
       >
         <div className="absolute inset-0 z-0 bg-black opacity-60 " />
         <div className="z-10 w-full p-10 bg-white sm:max-w-lg rounded-xl">
           <div className="text-center">
-            <h2 className="mt-5 text-3xl font-bold text-gray-900">NFT Giveaway!</h2>
+            <h2 className="mt-5 text-3xl font-bold text-gray-900">
+              NFT Giveaway!
+            </h2>
             <p className="mt-2 text-sm text-gray-400">
               by Pratham Prasoon made with Thirdweb
             </p>
           </div>
 
-          <button className="w-full mt-5 bg-green-200 px-5 py-3 text-sm shadow-sm font-medium tracking-wider  text-green-600 rounded-full hover:shadow-2xl hover:bg-green-300">
-            Connect Metamask
+          <button className="w-full mt-5">
+            <ConnectWallet>Connect Metamask</ConnectWallet> 
           </button>
 
           <form className="mt-8 space-y-3" action="#" method="POST">
@@ -80,7 +78,11 @@ export default function Home() {
                       from your computer
                     </p>
                   </div>
-                  <input type="file" className="hidden" accept="image/png, image/jpeg, image/gif, image/jpg" />
+                  <input
+                    type="file"
+                    className="hidden"
+                    accept="image/png, image/jpeg, image/gif, image/jpg"
+                  />
                 </label>
               </div>
             </div>
@@ -107,14 +109,11 @@ export default function Home() {
                 </svg>
                 <span className="ml-2">Mint it!</span>
               </button>
-
             </div>
           </form>
         </div>
       </div>
-      <style
-
-      />
+      <style />
     </>
-  )
+  );
 }
