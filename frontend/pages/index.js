@@ -1,8 +1,9 @@
+import { useState, useCallback, useEffect } from "react";
 import axios from "axios";
 import { ConnectWallet } from "@3rdweb/react";
 import { useWeb3 } from "@3rdweb/hooks";
 import { useFormik } from 'formik';
-
+import { useDropzone } from "react-dropzone";
 
 const validate = values => {
   const errors = {};
@@ -34,34 +35,56 @@ const validate = values => {
 
 export default function Home() {
   const { address } = useWeb3();
+  const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+
+  const onDrop = useCallback(async (uploadedFiles) => {
+    if (uploadedFiles.length === 0) {
+      setError(true);
+      return;
+    }
+    setError(false);
+    setLoading(true);
+    setFile(uploadedFiles[0]);
+  }, []);
+
+  const { getRootProps, getInputProps } = useDropzone({
+    accept: "image/*",
+    multiple: false,
+    onDrop,
+  });
+
+  function handleUpload(values) {
+    if (file === null) {
+      setError(true);
+      return;
+    }
+
+    const form = new FormData();
+    form.append("address", address);
+    form.append("name", values.name);
+    form.append("description", values.description);
+    form.append("image", file);
+
+    axios.post('http://localhost:8000/mint', form).then(function (response) {
+      console.log(response);
+    }).catch(function (error) {
+      console.log(error);
+    });
+  }
+
   const formik = useFormik({
-         initialValues: {
-           name: '',
-           description: '',
-         },
-         validate,
-         onSubmit: values => {
-           console.log(values.name);
-           axios.post('http://localhost:8000/mint', {
-            Addy: address,
-            Name: values.name,
-            description: values.description,
-          })
-          .then(function (response) {
-            console.log(response);
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-         },
-       });
-
-
+    initialValues: {
+      name: '',
+      description: '',
+    },
+    validate,
+    onSubmit: (values) => handleUpload(values)
+  });
 
   return (
     <>
-      
-      {/* component */}
       <div
         className="relative flex items-center justify-center min-h-screen px-4 py-12 bg-no-repeat bg-cover bg-gray-50 sm:px-6 lg:px-8"
         style={{
@@ -117,32 +140,33 @@ export default function Home() {
               <label className="text-sm font-bold tracking-wide text-gray-500">
                 Attach Document
               </label>
-              <div className="flex items-center justify-center w-full">
-                <label className="flex flex-col w-full p-10 text-center border-4 border-dashed rounded-lg h-60 group">
-                  <div className="flex flex-col items-center justify-center w-full h-full text-center ">
-                    {/*-<svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-blue-400 group-hover:text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                              </svg>*/}
-                    <div className="flex flex-auto w-2/5 mx-auto -mt-10 max-h-48">
-                      <img
-                        className="object-center has-mask h-36"
-                        src="https://img.freepik.com/free-vector/image-upload-concept-landing-page_52683-27130.jpg?size=338&ext=jpg"
-                        alt="freepik image"
-                      />
+              <div {...getRootProps()}>
+                <input {...getInputProps()} />
+                <div className="flex items-center justify-center w-full">
+                  <label className="flex flex-col w-full p-10 text-center border-4 border-dashed rounded-lg h-60 group">
+                    <div className="flex flex-col items-center justify-center w-full h-full text-center ">
+                      {/*-<svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-blue-400 group-hover:text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                </svg>*/}
+                      <div className="flex flex-auto w-2/5 mx-auto -mt-10 max-h-48">
+                        <img
+                          className="object-center has-mask h-36"
+                          src="https://img.freepik.com/free-vector/image-upload-concept-landing-page_52683-27130.jpg?size=338&ext=jpg"
+                          alt="freepik image"
+                        />
+                      </div>
+                      <p className="text-gray-500 pointer-none ">
+                        <a href id className="text-blue-600 hover:underline">
+                          Select a file
+                        </a>{" "}
+                        from your computer
+                      </p>
                     </div>
-                    <p className="text-gray-500 pointer-none ">
-                      <a href id className="text-blue-600 hover:underline">
-                        Select a file
-                      </a>{" "}
-                      from your computer
-                    </p>
-                  </div>
-                  <input
-                    type="file"
-                    className="hidden"
-                    accept="image/png, image/jpeg, image/gif, image/jpg"
-                  />
-                </label>
+                    <input
+                      className="hidden"
+                    />
+                  </label>
+                </div>
               </div>
             </div>
             <p className="text-sm text-gray-300">
