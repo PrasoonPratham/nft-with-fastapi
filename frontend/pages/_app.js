@@ -2,7 +2,7 @@ import { ThirdwebProvider } from "@3rdweb/react";
 
 import "tailwindcss/tailwind.css";
 
-const supportedChainIds = [137];
+const supportedChainIds = [4,137];
 const connectors = {
   injected: {},
 };

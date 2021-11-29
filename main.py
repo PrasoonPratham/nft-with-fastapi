@@ -7,6 +7,11 @@ from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 
 
+class MintModel(BaseModel):
+    address: str
+    name: str
+    description: str 
+
 
 load_dotenv()
 PRIVATE_KEY = os.getenv("PRIVATE_KEY")
@@ -35,23 +40,21 @@ nft_module = sdk.get_nft_module(nft_smart_contract_address)
 
 @app.post("/mint")
 async def mint(
-    address: str = Form(...), 
-    name: str = Form(...), 
-    description: str = Form(...), 
-    image: UploadFile = Form(...),
-    properties: dict = Form(...)
-):
-    nft_module.mint_to(
-        address,
-        MintArg(
-            name=name,
-            description=description,
-            image=image.file.read(),
-            properties=properties
-        )
-    )
+     address: str = Form(...), 
+     name: str = Form(...), 
+     description: str = Form(...), 
+     image: UploadFile = Form(...),
+ ):
+     nft_module.mint_to(
+         address,
+         MintArg(
+             name=name,
+             description=description,
+             image=image.file.read(),
+         )
+     )
 
-    return "Minted!"
+     return "Minted!"
 
 @app.get("/list")
 def list_nfts():
