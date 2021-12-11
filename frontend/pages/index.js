@@ -3,6 +3,7 @@ import axios from "axios";
 import { ConnectWallet } from "@3rdweb/react";
 import { useWeb3 } from "@3rdweb/hooks";
 import { useFormik } from 'formik';
+import { useDropzone } from "react-dropzone";
 
 const validate = values => {
   const errors = {};
@@ -38,6 +39,23 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
+  const onDrop = useCallback(async (uploadedFiles) => {
+    if (uploadedFiles.length === 0) {
+      setError(true);
+      return;
+    }
+    setError(false);
+    setLoading(true);
+    setFile(uploadedFiles[0]);
+    console.log(uploadedFiles[0]);
+  }, []);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    accept: "image/*",
+    multiple: false,
+    onDrop,
+  });
+
   function handleUpload(values) {
     if (file === null) {
       setError(true);
@@ -52,8 +70,10 @@ export default function Home() {
 
     axios.post('http://localhost:8000/mint', form).then(function (response) {
       console.log(response);
+      alert(response.data);
     }).catch(function (error) {
       console.log(error);
+      alert(error.data);
     });
   }
 
@@ -123,17 +143,26 @@ export default function Home() {
               <label className="text-sm font-bold tracking-wide text-gray-500">
                 Attach Document
               </label>
-              
-              <div className="flex w-full items-center justify-center bg-grey-lighter">
-        <label className="w-full flex flex-col items-center px-4 py-6 bg-white text-blue rounded-lg shadow-lg tracking-wide uppercase border border-blue cursor-pointer hover:bg-blue hover:text-blue-600">
+
+              <div className="flex w-full items-center justify-center bg-grey-lighter" {...getRootProps()}>
+              <input {...getInputProps()} />
+        <label className="w-full flex flex-col items-center px-4 py-6 bg-white text-blue rounded-lg shadow-lg tracking-wide border border-blue cursor-pointer hover:bg-blue hover:text-blue-600">
           <svg className="w-8 h-8" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
             <path d="M16.88 9.1A4 4 0 0 1 16 17H5a5 5 0 0 1-1-9.9V7a3 3 0 0 1 4.52-2.59A4.98 4.98 0 0 1 17 8c0 .38-.04.74-.12 1.1zM11 11h3l-4-4-4 4h3v3h2v-3z" />
           </svg>
-          <span className="mt-2 text-base leading-normal">Select a file</span>
-          <input type="file" className="hidden" />
+          
+          {
+        isDragActive ?
+          <span className="mt-2 text-base leading-normal">Drop the image here ...</span> :
+          <span>Drag and drop some files here, or click to select files</span>
+                }    
         </label>
-      </div>
-  
+              </div>
+              
+
+
+              
+
             </div>
             <p className="text-sm text-gray-300">
               <span>File type: jpg,jpeg and other common types of images</span>

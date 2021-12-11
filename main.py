@@ -1,5 +1,4 @@
 import os
-import base64
 from fastapi import FastAPI, Form, Request, UploadFile
 from pydantic import BaseModel
 from thirdweb import ThirdwebSdk, SdkOptions, MintArg
@@ -10,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 class MintModel(BaseModel):
     address: str
     name: str
-    description: str 
+    description: str
 
 
 load_dotenv()
@@ -38,23 +37,35 @@ sdk.set_private_key(PRIVATE_KEY)
 nft_smart_contract_address = "0xD91A8C3Dd5fa4F829A009FCd9C1DDc8417DB78f9"
 nft_module = sdk.get_nft_module(nft_smart_contract_address)
 
+
 @app.post("/mint")
 async def mint(
-     address: str = Form(...), 
-     name: str = Form(...), 
-     description: str = Form(...), 
-     image: UploadFile = Form(...),
- ):
-     nft_module.mint_to(
-         address,
-         MintArg(
-             name=name,
-             description=description,
-             image=image.file.read(),
-         )
-     )
+    address: str = Form(...),
+    name: str = Form(...),
+    description: str = Form(...),
+    image: UploadFile = Form(...),
+):
+    # if nft_module.balance_of(address) < 5:
+    #     nft_module.mint_to(
+    #         address,
+    #         MintArg(
+    #             name=name,
+    #             description=description,
+    #             image=image.file.read(),
+    #         ),
+    #     )
+    nft_module.mint_to(
+        address,
+        MintArg(
+            name=name,
+            description=description,
+            image=image.file.read(),
+        ),
+    )
+    return "Minted!"
 
-     return "Minted!"
+
+
 
 @app.get("/list")
 def list_nfts():
