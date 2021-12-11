@@ -3,7 +3,6 @@ import axios from "axios";
 import { ConnectWallet } from "@3rdweb/react";
 import { useWeb3 } from "@3rdweb/hooks";
 import { useFormik } from 'formik';
-import { useDropzone } from "react-dropzone";
 
 const validate = values => {
   const errors = {};
@@ -38,22 +37,6 @@ export default function Home() {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-
-  const onDrop = useCallback(async (uploadedFiles) => {
-    if (uploadedFiles.length === 0) {
-      setError(true);
-      return;
-    }
-    setError(false);
-    setLoading(true);
-    setFile(uploadedFiles[0]);
-  }, []);
-
-  const { getRootProps, getInputProps } = useDropzone({
-    accept: "image/*",
-    multiple: false,
-    onDrop,
-  });
 
   function handleUpload(values) {
     if (file === null) {
@@ -140,34 +123,17 @@ export default function Home() {
               <label className="text-sm font-bold tracking-wide text-gray-500">
                 Attach Document
               </label>
-              <div {...getRootProps()}>
-                <input {...getInputProps()} />
-                <div className="flex items-center justify-center w-full">
-                  <label className="flex flex-col w-full p-10 text-center border-4 border-dashed rounded-lg h-60 group">
-                    <div className="flex flex-col items-center justify-center w-full h-full text-center ">
-                      {/*-<svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-blue-400 group-hover:text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                                </svg>*/}
-                      <div className="flex flex-auto w-2/5 mx-auto -mt-10 max-h-48">
-                        <img
-                          className="object-center has-mask h-36"
-                          src="https://img.freepik.com/free-vector/image-upload-concept-landing-page_52683-27130.jpg?size=338&ext=jpg"
-                          alt="freepik image"
-                        />
-                      </div>
-                      <p className="text-gray-500 pointer-none ">
-                        <a href id className="text-blue-600 hover:underline">
-                          Select a file
-                        </a>{" "}
-                        from your computer
-                      </p>
-                    </div>
-                    <input
-                      className="hidden"
-                    />
-                  </label>
-                </div>
-              </div>
+              
+              <div className="flex w-full items-center justify-center bg-grey-lighter">
+        <label className="w-full flex flex-col items-center px-4 py-6 bg-white text-blue rounded-lg shadow-lg tracking-wide uppercase border border-blue cursor-pointer hover:bg-blue hover:text-blue-600">
+          <svg className="w-8 h-8" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+            <path d="M16.88 9.1A4 4 0 0 1 16 17H5a5 5 0 0 1-1-9.9V7a3 3 0 0 1 4.52-2.59A4.98 4.98 0 0 1 17 8c0 .38-.04.74-.12 1.1zM11 11h3l-4-4-4 4h3v3h2v-3z" />
+          </svg>
+          <span className="mt-2 text-base leading-normal">Select a file</span>
+          <input type="file" className="hidden" />
+        </label>
+      </div>
+  
             </div>
             <p className="text-sm text-gray-300">
               <span>File type: jpg,jpeg and other common types of images</span>
